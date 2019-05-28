@@ -47,6 +47,7 @@ class GenerateDocumentation extends Command
      */
     public function handle()
     {
+        dd('handle method');
         try {
             URL::forceRootUrl(config('app.url'));
         } catch (\Exception $e) {
