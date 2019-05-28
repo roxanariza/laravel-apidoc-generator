@@ -9,6 +9,55 @@
 {!! $route['description'] !!}
 @endif
 
+
+### HTTP Request
+@foreach($route['methods'] as $method)
+    `{{$method}} {{$route['uri']}}`
+
+@endforeach
+
+###Permissions
+
+
+### Request Parameters
+
+
+|Type|Key|Required|Default|Options|Notes|
+|----|---|--------|-------|-------|-----|
+|body|data.type|yes||must be 'contentHierarchy'||
+|body|data.attributes.child_position|no| | |The position relative to the other children of the given parent. Will automatically shift other children. If null - position will be set to the end of the child stack.|
+|body|data.relationships.parent.data.type|yes| |must be 'content'||
+|body|data.relationships.parent.data.id|yes||||
+|body|data.relationships.child.data.type|yes| |must be 'content'||
+|body|data.relationships.child.data.id|yes||||
+
+
+@if(count($route['validationRules']))
+### Validation Rules
+{!! json_encode($route['validationRules'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) !!}
+@endif
+
+@if(count($route['bodyParameters']))
+    #### Body Parameters
+
+    Parameter | Type | Status | Description
+    --------- | ------- | ------- | ------- | -----------
+    @foreach($route['bodyParameters'] as $attribute => $parameter)
+      |body|  {{$attribute}} | {{$parameter['type']}} | @if($parameter['required']) required @else optional @endif | {!! $parameter['description'] !!} |
+    @endforeach
+@endif
+
+@if(count($route['queryParameters']))
+    #### Query Parameters
+
+    Parameter | Status | Description
+    --------- | ------- | ------- | -----------
+    @foreach($route['queryParameters'] as $attribute => $parameter)
+        {{$attribute}} | @if($parameter['required']) required @else optional @endif | {!! $parameter['description'] !!}
+    @endforeach
+@endif
+
+
 > Example request:
 
 @foreach($settings['languages'] as $language)
@@ -42,28 +91,7 @@
 @endif
 @endif
 
-### HTTP Request
-@foreach($route['methods'] as $method)
-`{{$method}} {{$route['uri']}}`
 
-@endforeach
-@if(count($route['bodyParameters']))
-#### Body Parameters
 
-Parameter | Type | Status | Description
---------- | ------- | ------- | ------- | -----------
-@foreach($route['bodyParameters'] as $attribute => $parameter)
-    {{$attribute}} | {{$parameter['type']}} | @if($parameter['required']) required @else optional @endif | {!! $parameter['description'] !!}
-@endforeach
-@endif
-@if(count($route['queryParameters']))
-#### Query Parameters
-
-Parameter | Status | Description
---------- | ------- | ------- | -----------
-@foreach($route['queryParameters'] as $attribute => $parameter)
-    {{$attribute}} | @if($parameter['required']) required @else optional @endif | {!! $parameter['description'] !!}
-@endforeach
-@endif
 
 <!-- END_{{$route['id']}} -->
