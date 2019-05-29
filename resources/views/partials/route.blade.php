@@ -16,7 +16,7 @@
 
 @endforeach
 
-###Permissions
+### Permissions
 
 
 ### Request Parameters
@@ -25,10 +25,10 @@
 |Type|Key|Required|Default|Options|Notes|
 |----|---|--------|-------|-------|-----|
 @foreach($route['bodyParameters'] as $attribute => $parameter)
-    |body|  {{$attribute}} | @if($parameter['required']) required @else optional @endif | | {{$parameter['type']}}  | {!! $parameter['description'] !!} |
+|body|{{$attribute}}| @if($parameter['required']) required @else optional @endif | |{{$parameter['type']}}|{!! $parameter['description'] !!}|
 @endforeach
 @foreach($route['queryParameters'] as $attribute => $parameter)
-    |query|{{$attribute}} | @if($parameter['required']) required @else optional @endif | ||{!! $parameter['description'] !!}|
+|query|{{$attribute}}| @if($parameter['required']) required @else optional @endif | ||{!! $parameter['description'] !!}|
 @endforeach
 
 @if(count($route['validationRules']))
@@ -38,7 +38,7 @@
 ```
 @endif
 
-### Example request:
+### Request Example:
 
 @foreach($settings['languages'] as $language)
 @include("apidoc::partials.example-requests.$language")
@@ -48,7 +48,7 @@
 @if(in_array('GET',$route['methods']) || (isset($route['showresponse']) && $route['showresponse']))
 @if(is_array($route['response']))
 @foreach($route['response'] as $response)
-### Example response ({{$response['status']}}):
+### Response Example ({{$response['status']}}):
 
 ```json
 @if(is_object($response['content']) || is_array($response['content']))
@@ -60,7 +60,7 @@
 @endforeach
 @else
 
-### Example response:
+### Response Example:
 
 ```json
 @if(is_object($route['response']) || is_array($route['response']))
