@@ -22,13 +22,13 @@
 ### Request Parameters
 
 
-|Type|Key|Required|Default|Options|Notes|
-|----|---|--------|-------|-------|-----|
+|Type|Key|Required|Notes|
+|----|---|--------|-----|
 @foreach($route['queryParameters'] as $attribute => $parameter)
-    |query|{{$attribute}}| @if($parameter['required']) required @else optional @endif | ||{!! $parameter['description'] !!}|
+|query|{{$attribute}}| @if($parameter['required']) yes @else  @endif |{!! $parameter['description'] !!}|
 @endforeach
 @foreach($route['bodyParameters'] as $attribute => $parameter)
-|body|{{$attribute}}| @if($parameter['required']) required @else optional @endif | |{{$parameter['type']}}|{!! $parameter['description'] !!}|
+|body|{{$attribute}}| @if($parameter['required']) yes @else  @endif |{!! $parameter['description'] !!}|
 @endforeach
 
 @if(count($route['validationRules']))
