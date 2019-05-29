@@ -24,11 +24,11 @@
 
 |Type|Key|Required|Default|Options|Notes|
 |----|---|--------|-------|-------|-----|
+@foreach($route['queryParameters'] as $attribute => $parameter)
+    |query|{{$attribute}}| @if($parameter['required']) required @else optional @endif | ||{!! $parameter['description'] !!}|
+@endforeach
 @foreach($route['bodyParameters'] as $attribute => $parameter)
 |body|{{$attribute}}| @if($parameter['required']) required @else optional @endif | |{{$parameter['type']}}|{!! $parameter['description'] !!}|
-@endforeach
-@foreach($route['queryParameters'] as $attribute => $parameter)
-|query|{{$attribute}}| @if($parameter['required']) required @else optional @endif | ||{!! $parameter['description'] !!}|
 @endforeach
 
 @if(count($route['validationRules']))
