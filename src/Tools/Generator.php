@@ -86,7 +86,8 @@ class Generator
             'authenticated' => $this->getAuthStatusFromDocBlock($docBlock['tags']),
             'response' => $content,
             'showresponse' => ! empty($content),
-            'validationRules' => $this->getValidationRules($method, $docBlock['tags'])
+            'validationRules' => $this->getValidationRules($method, $docBlock['tags']),
+            'permissions' => $this->getPermissions($method, $docBlock['tags'])
         ];
         $parsedRoute['headers'] = $rulesToApply['headers'] ?? [];
 
@@ -432,13 +433,13 @@ class Generator
                     return [];
                 }
 
-return $parameterClass->getMethod('rules')->invoke(null);
+            return $parameterClass->getMethod('rules')->invoke(null);
 
             }
         }
 
         return $this->getValidationRulesFromDocBlock($tags);
-}
+    }
 
     /**
      * @param array $tags
@@ -454,11 +455,70 @@ return $parameterClass->getMethod('rules')->invoke(null);
             })
             ->mapWithKeys(function ($tag) {
 
-return [$tag->getContent()];
+            return [$tag->getContent()];
 
             });
 
         return $parameters;
     }
+
+    /**
+     * @param $method
+     * @param $tags
+     * @return array
+     * @throws \ReflectionException
+     */
+    public function getPermissions($method, $tags){
+        foreach ($method->getParameters() as $param) {
+            $paramType = $param->getType();
+            if ($paramType === null) {
+                continue;
+            }
+
+            $parameterClassName = version_compare(phpversion(), '7.1.0', '<')
+                ? $paramType->__toString()
+                : $paramType->getName();
+
+            try {
+                $parameterClass = new ReflectionClass($parameterClassName);
+            } catch (\ReflectionException $e) {
+                continue;
+            }
+
+            if (class_exists('\Illuminate\Foundation\Http\FormRequest') && $parameterClass->isSubclassOf(\Illuminate\Foundation\Http\FormRequest::class) || class_exists('\Dingo\Api\Http\FormRequest') && $parameterClass->isSubclassOf(\Dingo\Api\Http\FormRequest::class)) {
+                $formRequestDocBlock = new DocBlock($parameterClass->getDocComment());
+                $queryParametersFromDocBlock = $this->getPermissionsFromDocBlock($formRequestDocBlock->getTags());
+
+                if (count($queryParametersFromDocBlock)) {
+                    return $queryParametersFromDocBlock;
+                }
+            }
+        }
+
+        return $this->getPermissionsFromDocBlock($tags);
+    }
+
+    /**
+     * @param array $tags
+     *
+     * @return array
+     */
+    protected function getPermissionsFromDocBlock(array $tags)
+    {
+
+        $parameters = collect($tags)
+            ->filter(function ($tag) {
+                return $tag instanceof Tag && $tag->getName() === 'permission';
+            })
+            ->mapWithKeys(function ($tag) {
+
+                return [$tag->getContent()];
+
+            });
+
+        return $parameters;
+    }
+
+
 
 }

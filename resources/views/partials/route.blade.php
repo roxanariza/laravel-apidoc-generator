@@ -17,7 +17,11 @@
 @endforeach
 
 ### Permissions
-
+@if(count($route['permissions']))
+    @foreach($route['permissions'] as $permission)
+- {{$permission}}
+    @endforeach
+@endif
 
 ### Request Parameters
 
